@@ -39,5 +39,6 @@ setup(
     extras_require={
         'docs': ['numpydoc'],
         'tests': ['pytest', 'pytest-cov'],
+        'training': ['pescador>=1.0']
     }
 )
