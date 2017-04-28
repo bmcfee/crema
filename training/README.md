@@ -3,7 +3,7 @@
 For each estimator that requires a pre-trained model, the training scripts will be stored under `training/ESTIMATOR/` and have the following filename convention:
 
 - `requirements.txt` : requirements file for training this model.  This should only be used for helper modules to facilitate training (eg, muda or pescador), and cannot be required for test-time prediction.
-- `index_train.json` : a json file listing the (relative) paths to training data as `(audio, jams)` pairs.  Must be parse-able into a `pandas` dataframe.
+- `index_train.json` : a json file listing the identifiers (`track_id`) of training data. Must be parse-able into a `pandas` dataframe.
 - `index_test.json`: like above, but for testing data.
 - `README.md`: description of the model architecture, parameters, training strategy, etc.
 
