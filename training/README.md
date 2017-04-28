@@ -37,3 +37,5 @@ Other conventions:
     - `feature_dir/track_id.npz` (or h5, etc.)
 
 - the above goes for data augmentation as well, using the `track_id.augment_id.ext` convention.
+
+- Common functionality and infrastructure for model training lives under `crema.utils`.
