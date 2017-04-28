@@ -34,7 +34,7 @@ Other conventions:
       (`jams` or `jamz`).
 
 - cached features should be locatable from the training index, using a similar convention to input data:
-    - `feature_dir/track_id.npz` (or h5, etc.)
+    - `feature_dir/track_id.h5` (or `npz`, etc.)
 
 - the above goes for data augmentation as well, using the `track_id.augment_id.ext` convention.
 
