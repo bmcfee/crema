@@ -3,6 +3,7 @@
 
 import os
 import subprocess
+import h5py
 
 
 def git_version():
@@ -72,3 +73,51 @@ def increment_version(filename):
         fd.write(version)
 
     return version
+
+
+def save_h5(filename, **kwargs):
+    '''Save data to an hdf5 file.
+
+    Parameters
+    ----------
+    filename : str
+        Path to the file
+
+    kwargs
+        key-value pairs of data
+
+    See Also
+    --------
+    load_h5
+    '''
+    with h5py.File(filename, 'w') as hf:
+        hf.update(kwargs)
+
+
+def load_h5(filename):
+    '''Load data from an hdf5 file created by `save_h5`.
+
+    Parameters
+    ----------
+    filename : str
+        Path to the hdf5 file
+
+    Returns
+    -------
+    data : dict
+        The key-value data stored in `filename`
+
+    See Also
+    --------
+    save_h5
+    '''
+    data = {}
+
+    def collect(k, v):
+        if isinstance(v, h5py.Dataset):
+            data[k] = v.value
+
+    with h5py.File(filename, mode='r') as hf:
+        hf.visititems(collect)
+
+    return data

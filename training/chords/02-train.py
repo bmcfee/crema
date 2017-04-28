@@ -8,7 +8,6 @@ from glob import glob
 import six
 import pickle
 
-import numpy as np
 import pandas as pd
 import keras as K
 
@@ -85,11 +84,8 @@ def make_sampler(max_samples, duration, pump, seed):
 
 
 def data_sampler(fname, sampler):
-    '''Generate samples from a specified npz file'''
-    data = np.load(fname)
-    ddata = dict(data)
-    data.close()
-    for datum in sampler(ddata):
+    '''Generate samples from a specified h5 file'''
+    for datum in sampler(crema.utils.load_h5(fname)):
         yield datum
 
 
@@ -100,11 +96,11 @@ def data_generator(working, tracks, sampler, k, batch_size=32, **kwargs):
 
     for track in tracks:
         fname = os.path.join(working, 'pump',
-                             os.path.extsep.join([track, 'npz']))
+                             os.path.extsep.join([track, 'h5']))
         seeds.append(pescador.Streamer(data_sampler, fname, sampler))
 
         for fname in sorted(glob(os.path.join(working, 'pump',
-                                              '{}.*.npz'.format(track)))):
+                                              '{}.*.h5'.format(track)))):
             seeds.append(pescador.Streamer(data_sampler, fname, sampler))
 
     # Send it all to a mux
@@ -212,7 +208,7 @@ def train(working, max_samples, duration, rate,
     Parameters
     ----------
     working : str
-        directory that contains the experiment data (npz)
+        directory that contains the experiment data (h5)
 
     max_samples : int
         Maximum number of samples per streamer
