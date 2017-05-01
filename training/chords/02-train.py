@@ -89,7 +89,8 @@ def data_sampler(fname, sampler):
         yield datum
 
 
-def data_generator(working, tracks, sampler, k, batch_size=32, **kwargs):
+def data_generator(working, tracks, sampler, k, augment=True, batch_size=32,
+                   **kwargs):
     '''Generate a data stream from a collection of tracks and a sampler'''
 
     seeds = []
@@ -99,9 +100,10 @@ def data_generator(working, tracks, sampler, k, batch_size=32, **kwargs):
                              os.path.extsep.join([track, 'h5']))
         seeds.append(pescador.Streamer(data_sampler, fname, sampler))
 
-        for fname in sorted(glob(os.path.join(working,
-                                              '{}.*.h5'.format(track)))):
-            seeds.append(pescador.Streamer(data_sampler, fname, sampler))
+        if augment:
+            for fname in sorted(glob(os.path.join(working,
+                                                  '{}.*.h5'.format(track)))):
+                seeds.append(pescador.Streamer(data_sampler, fname, sampler))
 
     # Send it all to a mux
     mux = pescador.Mux(seeds, k, **kwargs)
@@ -264,6 +266,7 @@ def train(working, max_samples, duration, rate,
 
     gen_train = data_generator(working,
                                idx_train['id'].values, sampler, epoch_size,
+                               augment=True,
                                lam=rate,
                                batch_size=batch_size,
                                revive=True,
@@ -273,6 +276,7 @@ def train(working, max_samples, duration, rate,
 
     gen_val = data_generator(working,
                              idx_val['id'].values, sampler, len(idx_val),
+                             augment=False,
                              batch_size=batch_size,
                              revive=True,
                              random_state=seed)
