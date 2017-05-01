@@ -25,7 +25,7 @@ def process_arguments(args):
                         help='Sampling rate for audio analysis')
 
     parser.add_argument('--hop-length', dest='hop_length', type=int,
-                        default=512,
+                        default=4096,
                         help='Hop length for audio analysis')
 
     parser.add_argument('--octaves', dest='n_octaves', type=int,
