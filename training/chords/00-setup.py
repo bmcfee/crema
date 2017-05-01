@@ -89,4 +89,4 @@ if __name__ == '__main__':
                                                    params.output_path,
                                                    params.audio_ext,
                                                    params.jams_ext)
-                                   for aud, ann in tqdm(data))
+                                   for aud, ann in tqdm(data, desc='Augmenting data'))
