@@ -198,7 +198,7 @@ def construct_model(pump):
                      'chord_struct/root',
                      'chord_struct/bass']
 
-    return model, model_inputs, model_outputs
+    return model, [model_inputs], model_outputs
 
 
 def train(working, max_samples, duration, rate,
