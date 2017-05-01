@@ -6,6 +6,7 @@ import sys
 import os
 import pickle
 
+from tqdm import tqdm
 from joblib import Parallel, delayed
 
 from jams.util import smkdirs
@@ -84,4 +85,4 @@ if __name__ == '__main__':
                                                    params.output_path,
                                                    params.audio_ext,
                                                    params.jams_ext)
-                                   for aud, ann in data))
+                                   for aud, ann in tqdm(data)))
