@@ -1,4 +1,4 @@
-#!/usr.bin/env python
+#!/usr/bin/env python
 '''CREMA structured chord model'''
 
 import argparse
@@ -61,7 +61,7 @@ def make_muda(n_semitones):
     '''Construct a MUDA pitch shifter'''
 
     tones = []
-    for n in n_semitones:
+    for n in range(n_semitones):
         tones.extend([-n, n])
 
     shifter = muda.deformers.PitchShift(n_semitones=tones)
@@ -70,7 +70,7 @@ def make_muda(n_semitones):
     with open(os.path.join(OUTPUT_PATH, 'muda.pkl'), 'wb') as fd:
         pickle.dump(shifter, fd)
 
-    return fd
+    return shifter
 
 
 if __name__ == '__main__':
@@ -81,8 +81,12 @@ if __name__ == '__main__':
 
     # Get the file list
     data = crema.utils.get_ann_audio(params.input_path)
-    Parallel(n_jobs=params.n_jobs)(delayed(augment(aud, ann, deformer,
+
+    # Launch the job
+    smkdirs(params.output_path)
+
+    Parallel(n_jobs=params.n_jobs)(delayed(augment)(aud, ann, deformer,
                                                    params.output_path,
                                                    params.audio_ext,
                                                    params.jams_ext)
-                                   for aud, ann in tqdm(data)))
+                                   for aud, ann in tqdm(data))
