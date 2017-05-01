@@ -242,7 +242,7 @@ def train(working, max_samples, duration, rate,
     '''
 
     # Load the pump
-    with open(os.path.join(working, 'pump.pkl'), 'rb') as fd:
+    with open(os.path.join(OUTPUT_PATH, 'pump.pkl'), 'rb') as fd:
         pump = pickle.load(fd)
 
     # Build the sampler
@@ -324,8 +324,8 @@ if __name__ == '__main__':
 
     smkdirs(OUTPUT_PATH)
 
-    version = crema.utils.model_version(os.path.join(OUTPUT_PATH,
-                                                     'version.txt'))
+    version = crema.utils.increment_version(os.path.join(OUTPUT_PATH,
+                                                         'version.txt'))
 
     print('{}: training'.format(__doc__))
     print('Model version: {}'.format(version))
