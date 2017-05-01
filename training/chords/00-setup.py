@@ -75,18 +75,22 @@ def make_muda(n_semitones):
 
 if __name__ == '__main__':
     params = process_arguments(sys.argv[1:])
+    smkdirs(OUTPUT_PATH)
+    smkdirs(params.output_path)
+
+    print('{}: setup'.format(__doc__))
+    print(params)
 
     # Build the deformer
     deformer = make_muda(params.semitones)
 
     # Get the file list
-    data = crema.utils.get_ann_audio(params.input_path)
+    stream = tqdm(crema.utils.get_ann_audio(params.input_path),
+                  desc='Augmenting training data')
 
     # Launch the job
-    smkdirs(params.output_path)
-
     Parallel(n_jobs=params.n_jobs)(delayed(augment)(aud, ann, deformer,
                                                     params.output_path,
                                                     params.audio_ext,
                                                     params.jams_ext)
-                                   for aud, ann in tqdm(data, desc='Augmenting data'))
+                                   for aud, ann in stream)

@@ -327,8 +327,8 @@ if __name__ == '__main__':
     version = crema.utils.model_version(os.path.join(OUTPUT_PATH,
                                                      'version.txt'))
 
-    print('Building: {}'.format(__doc__))
-    print('Version: {}'.format(version))
+    print('{}: training'.format(__doc__))
+    print('Model version: {}'.format(version))
     print(params)
 
     train(params.working,
