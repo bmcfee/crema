@@ -28,7 +28,7 @@ def process_arguments(args):
                         default=512,
                         help='Hop length for audio analysis')
 
-    parser.add_argument('--octaves', dest='n_octavse', type=int,
+    parser.add_argument('--octaves', dest='n_octaves', type=int,
                         default=6,
                         help='Number of octaves above C1')
 
