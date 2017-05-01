@@ -80,7 +80,7 @@ def convert(aud, jam, pump, outdir):
 
 
 if __name__ == '__main__':
-    params = process_arguments(sys.arv[1:])
+    params = process_arguments(sys.argv[1:])
     smkdirs(OUTPUT_PATH)
     smkdirs(params.output_path)
 
