@@ -75,7 +75,8 @@ def make_pump(sr, hop_length, n_octaves):
 def convert(aud, jam, pump, outdir):
     data = pump.transform(aud, jam)
     smkdirs(outdir)
-    fname = os.path.extsep.join([outdir, crema.utils.base(aud), 'h5'])
+    fname = os.path.extsep.join([os.path.join(outdir, crema.utils.base(aud)),
+                                'h5'])
     crema.utils.save_h5(fname, **data)
 
 
