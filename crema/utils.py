@@ -4,6 +4,9 @@
 import os
 import subprocess
 import h5py
+from librosa.util import find_files
+
+from .exceptions import DataError
 
 
 def git_version():
@@ -121,3 +124,47 @@ def load_h5(filename):
         hf.visititems(collect)
 
     return data
+
+
+def base(filename):
+    '''Identify a file by its basename:
+
+    /path/to/base.name.ext => base.name
+
+    Parameters
+    ----------
+    filename : str
+        Path to the file
+
+    Returns
+    -------
+    base : str
+        The base name of the file
+    '''
+    return os.path.splitext(os.path.basename(filename))[0]
+
+
+def get_ann_audio(directory):
+    '''Get a list of annotations and audio files from a directory.
+
+    This also validates that the lengths match and are paired properly.
+
+    Parameters
+    ----------
+    directory : str
+        The directory to search
+
+    Returns
+    -------
+    pairs : list of tuples (audio_file, annotation_file)
+    '''
+
+    audio = find_files(directory)
+    annos = find_files(directory, ext=['jams', 'jamz'])
+
+    paired = list(zip(audio, annos))
+
+    if len(audio) != len(annos) or any([base(aud) != base(ann) for aud, ann in paired]):
+        raise DataError('Unmatched audio/annotation data in {}'.format(directory))
+
+    return paired
