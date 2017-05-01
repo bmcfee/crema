@@ -95,11 +95,11 @@ def data_generator(working, tracks, sampler, k, batch_size=32, **kwargs):
     seeds = []
 
     for track in tracks:
-        fname = os.path.join(working, 'pump',
+        fname = os.path.join(working,
                              os.path.extsep.join([track, 'h5']))
         seeds.append(pescador.Streamer(data_sampler, fname, sampler))
 
-        for fname in sorted(glob(os.path.join(working, 'pump',
+        for fname in sorted(glob(os.path.join(working,
                                               '{}.*.h5'.format(track)))):
             seeds.append(pescador.Streamer(data_sampler, fname, sampler))
 
