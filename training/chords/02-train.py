@@ -263,7 +263,7 @@ def train(working, max_samples, duration, rate,
     idx_val = idx_train_.iloc[val]
 
     gen_train = data_generator(working,
-                               idx_train.index, sampler, epoch_size,
+                               idx_train['id'].values, sampler, epoch_size,
                                lam=rate,
                                batch_size=batch_size,
                                revive=True,
