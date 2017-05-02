@@ -295,7 +295,7 @@ def train(working, max_samples, duration, rate,
 
     # Store the model
     model_spec = K.utils.serialize_keras_object(model)
-    with open(os.path.join(OUTPUT_PATH, 'model_spec.h5'), 'wb') as fd:
+    with open(os.path.join(OUTPUT_PATH, 'model_spec.pkl'), 'wb') as fd:
         pickle.dump(model_spec, fd)
 
     # Construct the weight path
