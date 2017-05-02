@@ -14,6 +14,7 @@ setup(
     packages=find_packages(),
     package_data={'': ['models/*/*.pkl',
                        'models/*/*.h5',
+                       'models/*/*.json',
                        'models/*/*.txt']},
     long_description="Convolutional-recurrent estimators for music analysis",
     classifiers=[
