@@ -39,3 +39,8 @@ Other conventions:
 - the above goes for data augmentation as well, using the `track_id.augment_id.ext` convention.
 
 - Common functionality and infrastructure for model training lives under `crema.utils`.
+
+- All model input names should correspond to pump fields
+
+- The first model output should correspond to a pump field.  This field will be used to
+  identify the task transformer that handles decoding into jams annotations.
