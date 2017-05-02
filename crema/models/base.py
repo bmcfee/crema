@@ -14,7 +14,7 @@ from ..version import version as version
 class CremaModel(object):
 
     def predict(self, filename=None, y=None, sr=None):
-        '''Predict chord labels
+        '''Predict annotations
 
         Parameters
         ----------
@@ -28,18 +28,17 @@ class CremaModel(object):
 
         Returns
         -------
-        jams.Annotation, namespace='chord'
-            The predicted chord annotation
+        jams.Annotation
+            The predicted annotation
         '''
 
         # Pump the input features
-        data = self.pump.transform(audio_f=filename, y=y, sr=sr)
+        output_key = self.model.output_names[0]
 
-        # Line up input variables with the data
-        pred = self.model.predict([data[_] for _ in self.model.input_names])
+        pred = self.outputs(filename=filename, y=y, sr=sr)
 
         # Invert the prediction.  This is always the first output layer.
-        ann = self.pump[self.model.output_names[0]].inverse(pred[0][0])
+        ann = self.pump[output_key].inverse(pred[output_key])
 
         # Populate the metadata
         ann.annotation_metadata.version = self.version
@@ -49,8 +48,34 @@ class CremaModel(object):
 
         return ann
 
-    def predict_proba(self, filename=None, y=None, sr=None):
-        raise NotImplementedError
+    def outputs(self, filename=None, y=None, sr=None):
+        '''Return the model outputs (i.e., predictions)
+
+        Parameters
+        ----------
+        filename : str (optional)
+            Path to audio file
+
+        y, sr : (optional)
+            Audio buffer and sample rate
+
+        .. note:: At least one of `filename` or `y, sr` must be provided.
+
+        Returns
+        -------
+        outputs : dict, {str: np.ndarray}
+            Each key corresponds to an output name,
+            and the value is the model's output for the given input
+        '''
+
+        # Pump the input features
+        data = self.pump.transform(audio_f=filename, y=y, sr=sr)
+
+        # Line up input variables with the data
+        pred = self.model.predict([data[_] for _ in self.model.input_names])
+
+        # Invert the prediction.  This is always the first output layer.
+        return {k: pred[i][0] for i, k in enumerate(self.model.output_names)}
 
     def transform(self, filename=None, y=None, sr=None):
         raise NotImplementedError
