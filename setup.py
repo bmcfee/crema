@@ -12,6 +12,9 @@ setup(
     url='http://github.com/bmcfee/crema',
     download_url='http://github.com/bmcfee/crema/releases',
     packages=find_packages(),
+    package_data={'': ['models/*/*.pkl',
+                       'models/*/*.h5',
+                       'models/*/*.txt']},
     long_description="Convolutional-recurrent estimators for music analysis",
     classifiers=[
         "License :: OSI Approved :: ISC License (ISCL)",
