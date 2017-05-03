@@ -63,7 +63,7 @@ def augment(afile, jfile, deformer, outpath, audio_ext, jams_ext):
 def make_muda(stretch, n_stretch):
     '''Construct a MUDA time stretcher'''
 
-    shifter = muda.deformers.LogspacetimeStretch(n_samples=n_stretch, lower=-stretch, upper=stretch)
+    shifter = muda.deformers.LogspaceTimeStretch(n_samples=n_stretch, lower=-stretch, upper=stretch)
 
     smkdirs(OUTPUT_PATH)
     with open(os.path.join(OUTPUT_PATH, 'muda.pkl'), 'wb') as fd:
