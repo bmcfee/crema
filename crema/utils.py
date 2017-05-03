@@ -33,7 +33,7 @@ def git_version():
         return out
 
     try:
-        out = _minimal_ext_cmd(['git', 'rev-parse', 'HEAD'])
+        out = _minimal_ext_cmd(['git', 'rev-parse', '--short', 'HEAD'])
         GIT_REVISION = out.strip().decode('ascii')
     except OSError:
         GIT_REVISION = "Unknown"
