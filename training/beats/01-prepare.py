@@ -54,6 +54,7 @@ def make_pump(sr, hop_length, n_fft):
                                             sr=sr,
                                             hop_length=hop_length,
                                             n_fft=n_fft,
+                                            conv='tf',
                                             log=True)
 
     p_beat = pumpp.task.BeatTransformer(name='beat',
