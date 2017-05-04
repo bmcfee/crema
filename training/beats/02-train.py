@@ -97,7 +97,7 @@ def data_generator(working, tracks, sampler, k, augment=True, batch_size=32,
 
     for track in tracks:
         fname = os.path.join(working,
-                             os.path.extsep.join([track, 'h5']))
+                             os.path.extsep.join([str(track), 'h5']))
         seeds.append(pescador.Streamer(data_sampler, fname, sampler))
 
         if augment:
