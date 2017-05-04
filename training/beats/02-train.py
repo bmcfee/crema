@@ -181,8 +181,8 @@ def construct_model(pump):
     rnn2 = K.layers.Bidirectional(K.layers.GRU(32,
                                                return_sequences=True))(rnn1)
 
-    p0 = K.layers.Dense(1, activation='softmax')
-    p1 = K.layers.Dense(1, activation='softmax')
+    p0 = K.layers.Dense(1, activation='sigmoid')
+    p1 = K.layers.Dense(1, activation='sigmoid')
 
     beat = K.layers.TimeDistributed(p0, name='beat')(rnn2)
     downbeat = K.layers.TimeDistributed(p1, name='downbeat')(rnn2)
