@@ -1,0 +1,3 @@
+pescador>=1.0
+muda>=0.1.3
+tqdm
