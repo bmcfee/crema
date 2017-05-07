@@ -150,12 +150,12 @@ def construct_model(pump):
     x_bn = K.layers.BatchNormalization()(x_mag)
 
     # First convolutional filter: a single 5x5
-    conv1_mag = K.layers.Convolution2D(8, (5, 5),
+    conv1_mag = K.layers.Convolution2D(4, (5, 5),
                                        padding='same',
                                        activation='relu',
                                        data_format='channels_last')(x_bn)
 
-    conv1_dph = K.layers.Convolution2D(8, (5, 5),
+    conv1_dph = K.layers.Convolution2D(4, (5, 5),
                                        padding='same',
                                        activation='relu',
                                        data_format='channels_last')(x_phase)
@@ -163,7 +163,7 @@ def construct_model(pump):
     conv_merge = K.layers.concatenate([conv1_mag, conv1_dph])
 
     # Second convolutional filter: a bank of full-height filters
-    conv2 = K.layers.Convolution2D(128, (1, int(conv_merge.shape[2])),
+    conv2 = K.layers.Convolution2D(8, (1, int(conv_merge.shape[2])),
                                    padding='valid', activation='relu',
                                    data_format='channels_last')(conv_merge)
 
@@ -175,17 +175,20 @@ def construct_model(pump):
     squeeze = K.layers.Lambda(_squeeze)(conv2)
 
     # BRNN layer
-    rnn1 = K.layers.Bidirectional(K.layers.GRU(32,
+    rnn1 = K.layers.Bidirectional(K.layers.GRU(16,
                                                return_sequences=True))(squeeze)
 
-    rnn2 = K.layers.Bidirectional(K.layers.GRU(32,
+    rnn2 = K.layers.Bidirectional(K.layers.GRU(16,
                                                return_sequences=True))(rnn1)
+
+    # Skip connection to the convolutional onset detector layer
+    codec = K.layers.concatenate([rnn2, squeeze])
 
     p0 = K.layers.Dense(1, activation='sigmoid')
     p1 = K.layers.Dense(1, activation='sigmoid')
 
-    beat = K.layers.TimeDistributed(p0, name='beat')(rnn2)
-    downbeat = K.layers.TimeDistributed(p1, name='downbeat')(rnn2)
+    beat = K.layers.TimeDistributed(p0, name='beat')(codec)
+    downbeat = K.layers.TimeDistributed(p1, name='downbeat')(codec)
 
     model = K.models.Model([x_mag, x_phase],
                            [beat, downbeat])
