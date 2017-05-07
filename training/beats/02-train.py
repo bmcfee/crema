@@ -77,8 +77,8 @@ def process_arguments(args):
 def make_sampler(max_samples, duration, pump, seed):
 
     n_frames = librosa.time_to_frames(duration,
-                                      sr=pump['stft'].sr,
-                                      hop_length=pump['stft'].hop_length)[0]
+                                      sr=pump['mel'].sr,
+                                      hop_length=pump['mel'].hop_length)[0]
 
     return pump.sampler(max_samples, n_frames, random_state=seed)
 
@@ -138,34 +138,26 @@ def keras_tuples(gen, inputs=None, outputs=None):
 
 def construct_model(pump):
 
-    model_inputs = ['stft/mag', 'stft/dphase']
+    model_inputs = ['mel/mag']
 
     # Build the input layer
     layers = pump.layers()
 
-    x_mag = layers['stft/mag']
-    x_phase = layers['stft/dphase']
+    x_mag = layers['mel/mag']
 
     # Apply batch normalization
     x_bn = K.layers.BatchNormalization()(x_mag)
 
     # First convolutional filter: a single 5x5
-    conv1_mag = K.layers.Convolution2D(4, (5, 5),
-                                       padding='same',
-                                       activation='relu',
-                                       data_format='channels_last')(x_bn)
-
-    conv1_dph = K.layers.Convolution2D(4, (5, 5),
-                                       padding='same',
-                                       activation='relu',
-                                       data_format='channels_last')(x_phase)
-
-    conv_merge = K.layers.concatenate([conv1_mag, conv1_dph])
+    conv1 = K.layers.Convolution2D(8, (5, 5),
+                                   padding='same',
+                                   activation='relu',
+                                   data_format='channels_last')(x_bn)
 
     # Second convolutional filter: a bank of full-height filters
-    conv2 = K.layers.Convolution2D(8, (1, int(conv_merge.shape[2])),
+    conv2 = K.layers.Convolution2D(32, (1, int(conv1.shape[2])),
                                    padding='valid', activation='relu',
-                                   data_format='channels_last')(conv_merge)
+                                   data_format='channels_last')(conv1)
 
     # Squeeze out the frequency dimension
     def _squeeze(x):
@@ -190,7 +182,7 @@ def construct_model(pump):
     beat = K.layers.TimeDistributed(p0, name='beat')(codec)
     downbeat = K.layers.TimeDistributed(p1, name='downbeat')(codec)
 
-    model = K.models.Model([x_mag, x_phase],
+    model = K.models.Model([x_mag],
                            [beat, downbeat])
 
     model_outputs = ['beat/beat', 'beat/downbeat']

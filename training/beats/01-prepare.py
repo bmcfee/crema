@@ -32,6 +32,10 @@ def process_arguments(args):
                         default=2048,
                         help='Number of FFT bins')
 
+    parser.add_argument('--nmels', dest='n_mels', type=int,
+                        default=256,
+                        help='Number of Mel bins')
+
     parser.add_argument('--jobs', dest='n_jobs', type=int,
                         default=1,
                         help='Number of jobs to run in parallel')
@@ -49,13 +53,14 @@ def process_arguments(args):
     return parser.parse_args(args)
 
 
-def make_pump(sr, hop_length, n_fft):
-    p_feature = pumpp.feature.STFTPhaseDiff(name='stft',
-                                            sr=sr,
-                                            hop_length=hop_length,
-                                            n_fft=n_fft,
-                                            conv='tf',
-                                            log=True)
+def make_pump(sr, hop_length, n_fft, n_mels):
+    p_feature = pumpp.feature.Mel(name='mel',
+                                  sr=sr,
+                                  hop_length=hop_length,
+                                  n_fft=n_fft,
+                                  n_mels=n_mels,
+                                  log=True,
+                                  conv='tf')
 
     p_beat = pumpp.task.BeatTransformer(name='beat',
                                         sr=sr, hop_length=hop_length)
@@ -84,7 +89,7 @@ if __name__ == '__main__':
 
     print('{}: pre-processing'.format(__doc__))
     print(params)
-    pump = make_pump(params.sr, params.hop_length, params.n_fft)
+    pump = make_pump(params.sr, params.hop_length, params.n_fft, params.n_mels)
 
     stream = tqdm(crema.utils.get_ann_audio(params.input_path),
                   desc='Converting training data')

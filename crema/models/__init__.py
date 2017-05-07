@@ -3,3 +3,4 @@
 
 from . import base
 from . import chord
+from . import beat
