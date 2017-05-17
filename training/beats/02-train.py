@@ -148,14 +148,14 @@ def construct_model(pump):
     # Apply batch normalization
     x_bn = K.layers.BatchNormalization()(x_mag)
 
-    # First convolutional filter: a single 5x5
-    conv1 = K.layers.Convolution2D(8, (5, 5),
+    # First convolutional filter: a single 7x7
+    conv1 = K.layers.Convolution2D(8, (7, 7),
                                    padding='same',
                                    activation='relu',
                                    data_format='channels_last')(x_bn)
 
     # Second convolutional filter: a bank of full-height filters
-    conv2 = K.layers.Convolution2D(32, (1, int(conv1.shape[2])),
+    conv2 = K.layers.Convolution2D(16, (1, int(conv1.shape[2])),
                                    padding='valid', activation='relu',
                                    data_format='channels_last')(conv1)
 
@@ -173,8 +173,11 @@ def construct_model(pump):
     rnn2 = K.layers.Bidirectional(K.layers.GRU(16,
                                                return_sequences=True))(rnn1)
 
+    rnn3 = K.layers.Bidirectional(K.layers.GRU(16,
+                                               return_sequences=True))(rnn2)
+
     # Skip connection to the convolutional onset detector layer
-    codec = K.layers.concatenate([rnn2, squeeze])
+    codec = K.layers.concatenate([rnn3, squeeze])
 
     p0 = K.layers.Dense(1, activation='sigmoid')
     p1 = K.layers.Dense(1, activation='sigmoid')
