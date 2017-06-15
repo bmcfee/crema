@@ -35,7 +35,7 @@ if [ ! -d "$src" ]; then
         source activate $ENV_NAME
 
         conda install -c conda-forge librosa
-        pip install python-coveralls pytest-faulthandler
+        pip install python-coveralls pytest-cov pytest-faulthandler
 
         source deactivate
     popd

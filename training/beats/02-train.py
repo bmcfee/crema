@@ -179,11 +179,23 @@ def construct_model(pump):
     # Skip connection to the convolutional onset detector layer
     codec = K.layers.concatenate([rnn3, squeeze])
 
-    p0 = K.layers.Dense(1, activation='sigmoid')
-    p1 = K.layers.Dense(1, activation='sigmoid')
+#    p0 = K.layers.Dense(1, activation='sigmoid')
+#    p1 = K.layers.Dense(1, activation='sigmoid')
 
-    beat = K.layers.TimeDistributed(p0, name='beat')(codec)
-    downbeat = K.layers.TimeDistributed(p1, name='downbeat')(codec)
+#    beat = K.layers.TimeDistributed(p0, name='beat')(codec)
+#    downbeat = K.layers.TimeDistributed(p1, name='downbeat')(codec)
+
+    beat = K.layers.Convolution1D(1, 17,
+                                  padding='same',
+                                  activation='sigmoid',
+                                  data_format='channels_last',
+                                  name='beat')(codec)
+
+    downbeat = K.layers.Convolution1D(1, 17,
+                                      padding='same',
+                                      activation='sigmoid',
+                                      data_format='channels_last',
+                                      name='downbeat')(codec)
 
     model = K.models.Model([x_mag],
                            [beat, downbeat])
