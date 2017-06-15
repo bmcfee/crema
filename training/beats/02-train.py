@@ -25,7 +25,7 @@ def process_arguments(args):
     parser = argparse.ArgumentParser(description=__doc__)
 
     parser.add_argument('--max_samples', dest='max_samples', type=int,
-                        default=128,
+                        default=512,
                         help='Maximum number of samples to draw per streamer')
 
     parser.add_argument('--patch-duration', dest='duration', type=float,
@@ -45,7 +45,7 @@ def process_arguments(args):
                         help='Size of training batches')
 
     parser.add_argument('--rate', dest='rate', type=int,
-                        default=8,
+                        default=64,
                         help='Rate of pescador stream deactivation')
 
     parser.add_argument('--epochs', dest='epochs', type=int,
@@ -167,17 +167,17 @@ def construct_model(pump):
     squeeze = K.layers.Lambda(_squeeze)(conv2)
 
     # BRNN layer
-    rnn1 = K.layers.Bidirectional(K.layers.GRU(16,
+    rnn1 = K.layers.Bidirectional(K.layers.GRU(32,
                                                return_sequences=True))(squeeze)
 
-    rnn2 = K.layers.Bidirectional(K.layers.GRU(16,
-                                               return_sequences=True))(rnn1)
+#    rnn2 = K.layers.Bidirectional(K.layers.GRU(16,
+#                                               return_sequences=True))(rnn1)
 
-    rnn3 = K.layers.Bidirectional(K.layers.GRU(16,
-                                               return_sequences=True))(rnn2)
+#    rnn3 = K.layers.Bidirectional(K.layers.GRU(16,
+#                                               return_sequences=True))(rnn2)
 
     # Skip connection to the convolutional onset detector layer
-    codec = K.layers.concatenate([rnn3, squeeze])
+    codec = K.layers.concatenate([rnn1, squeeze])
 
 #    p0 = K.layers.Dense(1, activation='sigmoid')
 #    p1 = K.layers.Dense(1, activation='sigmoid')
