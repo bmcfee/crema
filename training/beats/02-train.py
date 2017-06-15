@@ -188,13 +188,11 @@ def construct_model(pump):
     beat = K.layers.Convolution1D(1, 17,
                                   padding='same',
                                   activation='sigmoid',
-                                  data_format='channels_last',
                                   name='beat')(codec)
 
     downbeat = K.layers.Convolution1D(1, 17,
                                       padding='same',
                                       activation='sigmoid',
-                                      data_format='channels_last',
                                       name='downbeat')(codec)
 
     model = K.models.Model([x_mag],
