@@ -160,12 +160,12 @@ def construct_model(pump):
                                    data_format='channels_last')(conv1)
 
     # Squeeze out the frequency dimension
-    def _squeeze(x):
+    def _squeeze(x, axis=-1):
         import keras
-        return keras.backend.squeeze(x, axis=2)
+        return keras.backend.squeeze(x, axis=axis)
 
     squeeze_c = K.layers.Lambda(_squeeze)(x_bn)
-    squeeze = K.layers.Lambda(_squeeze)(conv2)
+    squeeze = K.layers.Lambda(_squeeze, arguments=dict(axis=2))(conv2)
 
     rnn_in = K.layers.concatenate([squeeze, squeeze_c])
     # BRNN layer
