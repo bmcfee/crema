@@ -164,11 +164,13 @@ def construct_model(pump):
         import keras
         return keras.backend.squeeze(x, axis=2)
 
+    squeeze_c = K.layers.Lambda(_squeeze)(x_bn)
     squeeze = K.layers.Lambda(_squeeze)(conv2)
 
+    rnn_in = K.layers.concatenate([squeeze, squeeze_c])
     # BRNN layer
-    rnn1 = K.layers.Bidirectional(K.layers.GRU(32,
-                                               return_sequences=True))(squeeze)
+    rnn1 = K.layers.Bidirectional(K.layers.GRU(64,
+                                               return_sequences=True))(rnn_in)
 
 #    rnn2 = K.layers.Bidirectional(K.layers.GRU(16,
 #                                               return_sequences=True))(rnn1)
