@@ -34,7 +34,7 @@ if [ ! -d "$src" ]; then
 
         source activate $ENV_NAME
 
-        conda install -c conda-forge librosa
+        conda install -c conda-forge ffmpeg librosa
         pip install python-coveralls pytest-cov pytest-faulthandler
 
         source deactivate

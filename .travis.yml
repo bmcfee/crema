@@ -3,11 +3,6 @@ language: python
 # sudo false implies containerized builds
 sudo: false
 
-addons:
-  apt:
-    packages:
-    - ffmpeg
-
 notifications:
     email: false
 
