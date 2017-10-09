@@ -2,10 +2,11 @@
 # -*- encoding: utf-8 -*-
 '''Test helper utilities'''
 
-import pytest
 import tempfile
 import os
 import numpy as np
+
+import pytest
 
 import crema.utils
 from crema.exceptions import DataError
