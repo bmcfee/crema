@@ -56,7 +56,8 @@ author = 'Brian McFee'
 
 # Dependency mockery
 import mock
-MOCK_MODULES = ['keras', 'tensorflow', 'pumpp', 'jams', 'h5py', 'librosa.util']
+MOCK_MODULES = ['keras', 'tensorflow', 'pumpp', 'pumpp.core', 'crema.models.chord',
+                'jams', 'h5py', 'librosa', 'librosa.util', 'librosa.util.exceptions']
 
 sys.modules.update((mod_name, mock.Mock()) for mod_name in MOCK_MODULES)
 
@@ -97,7 +98,7 @@ todo_include_todos = False
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'alabaster'
+html_theme = 'default'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
