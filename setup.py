@@ -33,16 +33,17 @@ setup(
     keywords='audio music learning',
     license='ISC',
     install_requires=['six',
-                      'librosa>=0.5.0',
+                      'librosa==0.5.0',
                       'jams>=0.2.2',
                       'scikit-learn>=0.18',
                       'keras>=2.0',
                       'tensorflow>=1.0',
                       'mir_eval>=0.4',
+                      'pumpp>=0.3',
                       'h5py>=2.7'],
     extras_require={
-        'docs': ['numpydoc'],
+        'docs': ['numpydoc', 'sphinx'],
         'tests': ['pytest', 'pytest-cov'],
-        'training': ['pescador>=1.0']
+        'training': ['pescador>=1.0', 'muda']
     }
 )
