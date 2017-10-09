@@ -56,8 +56,9 @@ author = 'Brian McFee'
 
 # Dependency mockery
 import mock
-MOCK_MODULES = ['keras', 'tensorflow', 'pumpp', 'pumpp.core', 'crema.models.chord',
-                'jams', 'h5py', 'librosa', 'librosa.util', 'librosa.util.exceptions']
+MOCK_MODULES = ['keras', 'tensorflow', #'pumpp', 'pumpp.core',
+                'jams', 'h5py', 'librosa', 'librosa.util', 'librosa.feature',
+                'librosa.util.exceptions']
 
 sys.modules.update((mod_name, mock.Mock()) for mod_name in MOCK_MODULES)
 
@@ -116,15 +117,15 @@ html_static_path = ['_static']
 #
 # This is required for the alabaster theme
 # refs: http://alabaster.readthedocs.io/en/latest/installation.html#sidebars
-html_sidebars = {
-    '**': [
-        'about.html',
-        'navigation.html',
-        'relations.html',  # needs 'show_related': True theme option to display
-        'searchbox.html',
-        'donate.html',
-    ]
-}
+#html_sidebars = {
+#    '**': [
+#        'about.html',
+#        'navigation.html',
+#        'relations.html',  # needs 'show_related': True theme option to display
+#        'searchbox.html',
+#        'donate.html',
+#    ]
+#}
 
 
 # -- Options for HTMLHelp output ------------------------------------------

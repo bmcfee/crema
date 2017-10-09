@@ -3,10 +3,10 @@
 Model reference
 ===============
 
-.. module:: crema.models
-
 Chord recognition
 -----------------
-.. autoclass:: crema.models.chord.ChordModel
+.. module:: crema.models.chord
+
+.. autoclass:: ChordModel
     :inherited-members:
 
