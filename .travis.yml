@@ -7,9 +7,13 @@ notifications:
     email: false
 
 python:
-  - 3.4
-  - 3.5
-  - 3.6
+    - 3.4
+    - 3.5
+    - 3.6
+
+matrix:
+    allow_failures:
+        - python: 3.6
 
 cache:
     directories:
@@ -23,6 +27,9 @@ before_install:
 
 install:
     - pip install -e .[docs,tests]
+
+before_script:
+    - conda list
 
 script:
     - py.test
