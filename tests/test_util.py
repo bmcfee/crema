@@ -16,7 +16,28 @@ def test_git_version():
 
     ver = crema.utils.git_version()
 
-    assert ver == 'Unknown' or len(ver) == 7
+    assert len(ver) == 7 and isinstance(ver, str)
+
+
+@pytest.fixture
+def fake_dir():
+
+    fdir = tempfile.mkdtemp()
+
+    pwd = os.getcwd()
+    os.chdir(fdir)
+
+    yield fdir
+
+    os.chdir(pwd)
+    os.rmdir(fdir)
+
+
+def test_git_version_fail(fake_dir):
+
+    ver = crema.utils.git_version()
+
+    assert ver == 'UNKNOWN'
 
 
 @pytest.fixture
