@@ -46,7 +46,7 @@ def analyze(filename=None, y=None, sr=None):
     return jam
 
 
-def parse_args(args):
+def parse_args(args):  # pragma: no cover
 
     parser = argparse.ArgumentParser(description=__doc__)
 
@@ -62,7 +62,7 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
-def main():
+def main():  # pragma: no cover
     params = parse_args(sys.argv[1:])
     jam = analyze(params.filename)
     jam.save(params.output)
@@ -71,5 +71,5 @@ def main():
 # Populate models array
 __MODELS__.append(models.chord.ChordModel())
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     main()
