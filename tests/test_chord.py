@@ -65,6 +65,9 @@ def _validate_outputs(data):
     assert np.all(data['chord_bass'] >= 0) and np.allclose(np.sum(data['chord_bass'], axis=1), 1)
     assert data['chord_tag'].shape[1] == 170
     assert np.all(data['chord_tag'] >= 0) and np.allclose(np.sum(data['chord_tag'], axis=1), 1)
+    assert data['chord_pitch'].shape[0] == data['chord_root'].shape[0]
+    assert data['chord_pitch'].shape[0] == data['chord_bass'].shape[0]
+    assert data['chord_pitch'].shape[0] == data['chord_tag'].shape[0]
 
 
 def test_chord_predict_file(CHORD_MODEL, AUDIOFILE):
