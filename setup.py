@@ -33,7 +33,7 @@ setup(
     install_requires=['six',
                       'librosa==0.5',
                       'jams>=0.2.2',
-                      'scikit-learn==0.18',
+                      'scikit-learn>=0.18',
                       'keras>=2.0',
                       'tensorflow>=1.0',
                       'mir_eval>=0.4',
