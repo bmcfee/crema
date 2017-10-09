@@ -70,7 +70,6 @@ def main():
 
 # Populate models array
 __MODELS__.append(models.chord.ChordModel())
-#__MODELS__.append(models.beat.BeatModel())
 
 if __name__ == '__main__':
     main()
