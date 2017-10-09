@@ -1,7 +1,9 @@
 # crema
 convolutional and recurrent estimators for music analysis
+
 [![Build Status](https://travis-ci.org/bmcfee/crema.svg?branch=master)](https://travis-ci.org/bmcfee/crema)
 [![Coverage Status](https://coveralls.io/repos/github/bmcfee/crema/badge.svg?branch=master)](https://coveralls.io/github/bmcfee/crema?branch=master)
+[![Documentation Status](https://readthedocs.org/projects/crema/badge/?version=latest)](http://crema.readthedocs.io/en/latest/?badge=latest)
 
 
 Usage options
