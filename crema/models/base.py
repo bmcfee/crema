@@ -13,7 +13,7 @@ from ..version import version as version
 
 class CremaModel(object):
 
-    def predict(self, filename=None, y=None, sr=None):
+    def predict(self, filename=None, y=None, sr=None, outputs=None):
         '''Predict annotations
 
         Parameters
@@ -24,7 +24,13 @@ class CremaModel(object):
         y, sr : (optional)
             Audio buffer and sample rate
 
-        .. note:: At least one of `filename` or `y, sr` must be provided.
+        outputs : (optional)
+            Pre-computed model outputs as produced by `CremaModel.outputs`.
+            If provided, then predictions are derived from these instead of
+            `filename` or `(y, sr)`.
+
+
+        .. note:: At least one of `filename`, `y, sr` must be provided.
 
         Returns
         -------
@@ -35,7 +41,10 @@ class CremaModel(object):
         # Pump the input features
         output_key = self.model.output_names[0]
 
-        pred = self.outputs(filename=filename, y=y, sr=sr)
+        if outputs is None:
+            pred = self.outputs(filename=filename, y=y, sr=sr)
+        else:
+            pred = outputs
 
         # Invert the prediction.  This is always the first output layer.
         ann = self.pump[output_key].inverse(pred[output_key])
