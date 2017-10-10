@@ -12,24 +12,64 @@
 Convolutional and Recurrent Estimators for Music Analysis
 =========================================================
 
-The CREMA package provides pre-trained statistical models for a variety of musical analysis tasks.
+The `crema` package provides pre-trained statistical models for a variety of musical analysis tasks.
+All tasks are provided under a unified interface, which can be accessed by the :ref:`analyze`
+functionality.
 
+Currently, only chord recognition is supported, but more features will be introduced over
+time.
+
+The `crema` analyzer can operate on either audio files stored on disk, or audio buffers
+stored in `numpy` arrays.
+The results of the analyzer are stored in a `JAMS <https://jams.readthedocs.org/>`_ object.
 
 
 Installation
 ------------
 
-ADD INSTALL DOCS
+`crema` can be installed directly from GitHub by issuing the following command:
 
+.. code:: shell
+
+    pip install -e git+https://github.com/bmcfee/crema.git
+
+or from PyPI by:
+
+.. code:: shell
+
+    pip install crema
 
 Quick start
 -----------
 
-ADD EXAMPLES
+The simplest way to apply `crema` is via the command line:
 
-    Command line
+.. code:: shell
 
-    In python
+    python -m crema.analyze -o my_song.jams /path/to/my_song.ogg
+
+.. note:: 
+    Any audio format supported by `librosa <https://librosa.github.io/>`_ will work here.
+
+This command will apply all analyzers to `mysong.ogg` and store the outputs as
+`my_song.jams`.
+
+For processing multiple recordings, the above will be inefficient because it will have to
+instantiate the models repeatedly each time.
+If you need to process a batch of recordings, it is better to do so directly in Python:
+
+.. code:: python
+
+    from crema.analyze import analyze
+
+    jam1 = analyze(filename='song1.ogg')
+    jam1.save('song1.jams')
+
+    jam2 = analyze(filename='song2.ogg')
+    jam2.save('song2.jams')
+
+    ...
+
 
 API Reference
 -------------
