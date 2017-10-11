@@ -18,4 +18,5 @@ The implementation here has been enhanced to support inversion (bass) tracking, 
 
 .. autoclass:: ChordModel
     :inherited-members:
+    :members:
 

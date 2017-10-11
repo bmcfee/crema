@@ -56,7 +56,7 @@ class CremaModel(object):
         return ann
 
     def outputs(self, filename=None, y=None, sr=None):
-        '''Return the model outputs (i.e., predictions)
+        '''Return the model outputs (e.g., class likelihoods)
 
         Parameters
         ----------
@@ -85,6 +85,7 @@ class CremaModel(object):
         return {k: pred[i][0] for i, k in enumerate(self.model.output_names)}
 
     def transform(self, filename=None, y=None, sr=None):
+        '''Feature transformation'''
         raise NotImplementedError
 
     def _instantiate(self, rsc):
