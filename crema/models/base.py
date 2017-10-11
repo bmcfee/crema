@@ -42,12 +42,10 @@ class CremaModel(object):
         output_key = self.model.output_names[0]
 
         if outputs is None:
-            pred = self.outputs(filename=filename, y=y, sr=sr)
-        else:
-            pred = outputs
+            outputs = self.outputs(filename=filename, y=y, sr=sr)
 
         # Invert the prediction.  This is always the first output layer.
-        ann = self.pump[output_key].inverse(pred[output_key])
+        ann = self.pump[output_key].inverse(outputs[output_key])
 
         # Populate the metadata
         ann.annotation_metadata.version = self.version
@@ -58,7 +56,7 @@ class CremaModel(object):
         return ann
 
     def outputs(self, filename=None, y=None, sr=None):
-        '''Return the model outputs (i.e., predictions)
+        '''Return the model outputs (e.g., class likelihoods)
 
         Parameters
         ----------
@@ -87,6 +85,7 @@ class CremaModel(object):
         return {k: pred[i][0] for i, k in enumerate(self.model.output_names)}
 
     def transform(self, filename=None, y=None, sr=None):
+        '''Feature transformation'''
         raise NotImplementedError
 
     def _instantiate(self, rsc):

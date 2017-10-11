@@ -6,3 +6,4 @@ from .version import version as __version__
 
 from .exceptions import *
 from . import models
+from . import analyze
