@@ -55,12 +55,20 @@ author = 'Brian McFee'
 
 
 # Dependency mockery
-import mock
-MOCK_MODULES = ['keras', 'tensorflow', 'numpy', 'scipy', 'scipy.stats',
-                'jams', 'h5py', 'librosa', 'librosa.util', 'librosa.feature',
-                'librosa.util.exceptions']
+# import mock
+from unittest.mock import MagicMock
 
-sys.modules.update((mod_name, mock.Mock()) for mod_name in MOCK_MODULES)
+class Mock(MagicMock):
+    @classmethod
+    def __getattr__(cls, name):
+        return MagicMock()
+
+MOCK_MODULES = ['keras', 'tensorflow', 'numpy', 'mir_eval',
+                'scipy', 'scipy.stats', 'librosa.util',
+                'jams', 'h5py', 'librosa']
+
+
+sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
 
 # The version info for the project you're documenting, acts as replacement for
