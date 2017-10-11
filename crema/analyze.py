@@ -34,6 +34,8 @@ def analyze(filename=None, y=None, sr=None):
         a JAMS object containing all estimated annotations
     '''
 
+    _load_models()
+
     jam = jams.JAMS()
     # populate file metadata
 
@@ -69,7 +71,13 @@ def main():  # pragma: no cover
 
 
 # Populate models array
-__MODELS__.append(models.chord.ChordModel())
+def _load_models():
+    '''This helper builds and caches the model objects.'''
+    global __MODELS__
+
+    if not __MODELS__:
+        __MODELS__.append(models.chord.ChordModel())
+
 
 if __name__ == '__main__':  # pragma: no cover
     main()

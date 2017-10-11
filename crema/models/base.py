@@ -42,12 +42,10 @@ class CremaModel(object):
         output_key = self.model.output_names[0]
 
         if outputs is None:
-            pred = self.outputs(filename=filename, y=y, sr=sr)
-        else:
-            pred = outputs
+            outputs = self.outputs(filename=filename, y=y, sr=sr)
 
         # Invert the prediction.  This is always the first output layer.
-        ann = self.pump[output_key].inverse(pred[output_key])
+        ann = self.pump[output_key].inverse(outputs[output_key])
 
         # Populate the metadata
         ann.annotation_metadata.version = self.version
