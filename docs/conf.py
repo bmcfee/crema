@@ -56,7 +56,7 @@ author = 'Brian McFee'
 
 # Dependency mockery
 import mock
-MOCK_MODULES = ['keras', 'tensorflow', #'pumpp', 'pumpp.core',
+MOCK_MODULES = ['keras', 'tensorflow', 'numpy',
                 'jams', 'h5py', 'librosa', 'librosa.util', 'librosa.feature',
                 'librosa.util.exceptions']
 
