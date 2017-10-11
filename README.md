@@ -27,13 +27,13 @@ python -m crema.analyze file.mp3 -o file.jams
 From within python:
 
 ```python
-import crema.analyze
+from crema.analyze import analyze
 
-jam = crema.analyze(filename='/path/to/file.mp3')
+jam = analyze(filename='/path/to/file.mp3')
 ```
 
 or if you have an audio buffer in memory, librosa-style:
 
 ```python
-jam = crema.analyze(y=y, sr=sr)
+jam = analyze(y=y, sr=sr)
 ```
