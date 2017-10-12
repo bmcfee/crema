@@ -73,7 +73,6 @@ class ChordModel(CremaModel):
         ann = super(ChordModel, self).predict(y=y, sr=sr, filename=filename,
                                               outputs=outputs)
 
-        tag_pred = outputs['chord_tag']
         bass_pred = outputs['chord_bass']
 
         # Handle inversion estimation
@@ -83,11 +82,6 @@ class ChordModel(CremaModel):
                                         hop_length=pump_op.hop_length)
 
             value = obs.value
-
-            # Reverse the value to get the label index
-            tag_idx = pump_op.encoder.transform([value])[0]
-            confidence = gmean(tag_pred[start:end+1, tag_idx])
-
             if obs.value not in ('N', 'X'):
                 mean_bass = gmean(bass_pred[start:end+1])
 
@@ -105,6 +99,6 @@ class ChordModel(CremaModel):
             ann.append(time=obs.time,
                        duration=obs.duration,
                        value=value,
-                       confidence=confidence)
+                       confidence=obs.confidence)
 
         return ann
