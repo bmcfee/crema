@@ -16,6 +16,7 @@ from sklearn.model_selection import ShuffleSplit
 import pescador
 import librosa
 import crema.utils
+import crema.layers
 from jams.util import smkdirs
 
 OUTPUT_PATH = 'resources'
@@ -106,34 +107,12 @@ def data_generator(working, tracks, sampler, k, augment=True, batch_size=32,
                 seeds.append(pescador.Streamer(data_sampler, fname, sampler))
 
     # Send it all to a mux
-    mux = pescador.Mux(seeds, k, **kwargs)
+    mux = pescador.StochasticMux(seeds, k, **kwargs)
 
     if batch_size == 1:
         return mux
     else:
         return pescador.BufferedStreamer(mux, batch_size)
-
-
-def keras_tuples(gen, inputs=None, outputs=None):
-
-    if isinstance(inputs, six.string_types):
-        if isinstance(outputs, six.string_types):
-            # One input, one output
-            for datum in gen:
-                yield (datum[inputs], datum[outputs])
-        else:
-            # One input, multi outputs
-            for datum in gen:
-                yield (datum[inputs], [datum[o] for o in outputs])
-    else:
-        if isinstance(outputs, six.string_types):
-            for datum in gen:
-                yield ([datum[i] for i in inputs], datum[outputs])
-        else:
-            # One input, multi outputs
-            for datum in gen:
-                yield ([datum[i] for i in inputs],
-                       [datum[o] for o in outputs])
 
 
 def construct_model(pump):
@@ -158,11 +137,7 @@ def construct_model(pump):
                                    data_format='channels_last')(conv1)
 
     # Squeeze out the frequency dimension
-    def _squeeze(x):
-        import keras
-        return keras.backend.squeeze(x, axis=2)
-
-    squeeze = K.layers.Lambda(_squeeze)(conv2)
+    squeeze = crema.layers.SqueezeLayer(axis=2)(conv2)
 
     # BRNN layer
     rnn1 = K.layers.Bidirectional(K.layers.GRU(128,
@@ -272,7 +247,9 @@ def train(working, max_samples, duration, rate,
                                revive=True,
                                random_state=seed)
 
-    gen_train = keras_tuples(gen_train(), inputs=inputs, outputs=outputs)
+    gen_train = pescador.maps.keras_tuples(gen_train(),
+                                           inputs=inputs,
+                                           outputs=outputs)
 
     gen_val = data_generator(working,
                              idx_val['id'].values, sampler, len(idx_val),
@@ -281,7 +258,9 @@ def train(working, max_samples, duration, rate,
                              revive=True,
                              random_state=seed)
 
-    gen_val = keras_tuples(gen_val(), inputs=inputs, outputs=outputs)
+    gen_val = pescador.maps.keras_tuples(gen_val(),
+                                         inputs=inputs,
+                                         outputs=outputs)
 
     loss = {'chord_tag': 'sparse_categorical_crossentropy'}
     metrics = {'chord_tag': 'sparse_categorical_accuracy'}
