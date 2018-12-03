@@ -42,6 +42,6 @@ setup(
     extras_require={
         'docs': ['numpydoc', 'sphinx'],
         'tests': ['pytest', 'pytest-cov'],
-        'training': ['pescador>=2.0', 'muda']
+        'training': ['pescador>=2.0.1', 'muda']
     }
 )

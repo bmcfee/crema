@@ -79,7 +79,7 @@ def make_sampler(max_samples, duration, pump, seed):
 
     n_frames = librosa.time_to_frames(duration,
                                       sr=pump['cqt'].sr,
-                                      hop_length=pump['cqt'].hop_length)[0]
+                                      hop_length=pump['cqt'].hop_length)
 
     return pump.sampler(max_samples, n_frames, random_state=seed)
 
@@ -90,7 +90,7 @@ def data_sampler(fname, sampler):
         yield datum
 
 
-def data_generator(working, tracks, sampler, k, augment=True, batch_size=32,
+def data_generator(working, tracks, sampler, k, augment=True, rate=8,
                    **kwargs):
     '''Generate a data stream from a collection of tracks and a sampler'''
 
@@ -107,12 +107,7 @@ def data_generator(working, tracks, sampler, k, augment=True, batch_size=32,
                 seeds.append(pescador.Streamer(data_sampler, fname, sampler))
 
     # Send it all to a mux
-    mux = pescador.StochasticMux(seeds, k, **kwargs)
-
-    if batch_size == 1:
-        return mux
-    else:
-        return pescador.BufferedStreamer(mux, batch_size)
+    return pescador.StochasticMux(seeds, k, rate, **kwargs)
 
 
 def construct_model(pump):
@@ -242,20 +237,18 @@ def train(working, max_samples, duration, rate,
     gen_train = data_generator(working,
                                idx_train['id'].values, sampler, epoch_size,
                                augment=True,
-                               lam=rate,
-                               batch_size=batch_size,
-                               revive=True,
+                               rate=rate,
+                               mode='with_replacement',
                                random_state=seed)
 
-    gen_train = pescador.maps.keras_tuples(gen_train(),
+    gen_train = pescador.maps.keras_tuples(pescador.maps.buffer_stream(gen_train(), batch_size=batch_size, axis=0),
                                            inputs=inputs,
                                            outputs=outputs)
 
     gen_val = data_generator(working,
                              idx_val['id'].values, sampler, len(idx_val),
                              augment=False,
-                             batch_size=batch_size,
-                             revive=True,
+                             mode='with_replacement',
                              random_state=seed)
 
     gen_val = pescador.maps.keras_tuples(gen_val(),
