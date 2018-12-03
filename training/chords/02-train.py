@@ -241,7 +241,9 @@ def train(working, max_samples, duration, rate,
                                mode='with_replacement',
                                random_state=seed)
 
-    gen_train = pescador.maps.keras_tuples(pescador.maps.buffer_stream(gen_train(), batch_size=batch_size, axis=0),
+    gen_train = pescador.maps.keras_tuples(pescador.maps.buffer_stream(gen_train(),
+                                                                       batch_size,
+                                                                       axis=0),
                                            inputs=inputs,
                                            outputs=outputs)
 
