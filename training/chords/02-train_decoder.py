@@ -33,10 +33,12 @@ def process_arguments(args):
 def self_transitions(fname):
     data = crema.utils.load_h5(fname)
 
-    tags = np.squeeze(data['chord_tag/chord'])
+    n_total, n_self = 0, 0
 
-    n_total = len(tags) - 1
-    n_self = np.sum(tags[1:] == tags[:-1])
+    # we might have multiple annotations per file
+    for tags in data['chord_tag/chord']:
+        n_total += len(tags) - 1
+        n_self += np.sum(tags[1:] == tags[:-1])
 
     return n_self, n_total
 
