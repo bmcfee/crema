@@ -127,7 +127,7 @@ def construct_model(pump):
                                    data_format='channels_last')(x_bn)
 
     # Second convolutional filter: a bank of full-height filters
-    conv2 = K.layers.Convolution2D(36, (1, int(conv1.shape[2])),
+    conv2 = K.layers.Convolution2D(12*6, (1, int(conv1.shape[2])),
                                    padding='valid', activation='relu',
                                    data_format='channels_last')(conv1)
 

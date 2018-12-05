@@ -71,7 +71,7 @@ def evaluate(input_path, n_jobs):
 
     print('Results')
     print('-------')
-    print(df.describe())
+    print(df.describe().T.sort_index())
 
     df.to_json(os.path.join(OUTPUT_PATH, 'test_scores.json'))
 
