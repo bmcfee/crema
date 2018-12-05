@@ -62,7 +62,7 @@ def make_muda(n_semitones):
 
     tones = []
     # -6 to +5 semitones
-    for n in range(-n_semitones, semitones):
+    for n in range(-n_semitones, n_semitones):
         if n != 0:
             tones.append(n)
 
