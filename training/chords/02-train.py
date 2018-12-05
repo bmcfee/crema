@@ -249,7 +249,8 @@ def train(working, max_samples, duration, rate,
 
     gen_val = data_generator(working,
                              idx_val['id'].values, sampler, len(idx_val),
-                             augment=False,
+                             augment=True,
+                             rate=rate,
                              mode='with_replacement',
                              random_state=seed)
 
