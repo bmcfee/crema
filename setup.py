@@ -31,7 +31,7 @@ setup(
     keywords='audio music learning',
     license='ISC',
     install_requires=['six',
-                      'librosa==0.6',
+                      'librosa>=0.6',
                       'jams>=0.3',
                       'scikit-learn>=0.18',
                       'keras>=2.0',
