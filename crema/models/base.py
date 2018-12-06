@@ -5,10 +5,11 @@ import pickle
 import os
 from pkg_resources import resource_filename
 
-import keras
+from keras.models import model_from_config
 import librosa
 
 from ..version import version as version
+from .. import layers
 
 
 class CremaModel(object):
@@ -101,7 +102,9 @@ class CremaModel(object):
                                     os.path.join(rsc, 'model_spec.pkl')),
                   'rb') as fd:
             spec = pickle.load(fd)
-            self.model = keras.models.model_from_config(spec)
+            self.model = model_from_config(spec,
+                                           custom_objects={k: layers.__dict__[k]
+                                                           for k in layers.__all__})
 
         # And the model weights
         self.model.load_weights(resource_filename(__name__,

@@ -41,8 +41,15 @@ def track_eval(ann, aud):
     jam_ref = jams.load(ann, validate=False)
 
     est = model.predict(filename=aud)
-    scores = jams.eval.chord(jam_ref.annotations['chord', 0],
-                             est)
+    try:
+        scores = jams.eval.chord(jam_ref.annotations['chord', 0],
+                                 est)
+    except ValueError as exc:
+        print(ann)
+        print(est.to_dataframe())
+        print(jam_ref.annotations['chord', 0].to_dataframe())
+        raise exc
+
     return (track, dict(scores))
 
 
@@ -64,7 +71,7 @@ def evaluate(input_path, n_jobs):
 
     print('Results')
     print('-------')
-    print(df.describe())
+    print(df.describe().T.sort_index())
 
     df.to_json(os.path.join(OUTPUT_PATH, 'test_scores.json'))
 

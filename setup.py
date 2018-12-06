@@ -24,23 +24,23 @@ setup(
         "Intended Audience :: Developers",
         "Topic :: Software Development",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.4",
         "Programming Language :: Python :: 3.5",
+        "Programming Language :: Python :: 3.6",
     ],
     keywords='audio music learning',
     license='ISC',
     install_requires=['six',
-                      'librosa==0.5',
-                      'jams>=0.2.2',
+                      'librosa>=0.6',
+                      'jams>=0.3',
                       'scikit-learn>=0.18',
                       'keras>=2.0',
                       'tensorflow>=1.0',
-                      'mir_eval>=0.4',
-                      'pumpp>=0.3.2',
+                      'mir_eval>=0.5',
+                      'pumpp>=0.4',
                       'h5py>=2.7'],
     extras_require={
         'docs': ['numpydoc', 'sphinx'],
         'tests': ['pytest', 'pytest-cov'],
-        'training': ['pescador>=1.0', 'muda']
+        'training': ['pescador>=2.0.1', 'muda']
     }
 )
