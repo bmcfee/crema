@@ -7,13 +7,8 @@ notifications:
     email: false
 
 python:
-    - 3.4
     - 3.5
     - 3.6
-
-matrix:
-    allow_failures:
-        - python: 3.6
 
 cache:
     directories:
@@ -32,7 +27,7 @@ before_script:
     - conda list
 
 script:
-    - py.test
+    - pytest
 
 after_success:
     - coveralls
