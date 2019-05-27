@@ -302,7 +302,7 @@ def train(working, max_samples, duration, rate,
                 chord_bass='sparse_categorical_crossentropy')
     monitor = 'val_chord_tag_sparse_categorical_accuracy'
 
-    sgd = optimizers.SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
+    sgd = K.optimizers.SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
     model.compile(sgd, loss=loss, metrics=metrics)
 
     # Store the model
