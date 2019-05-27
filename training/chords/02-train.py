@@ -302,7 +302,8 @@ def train(working, max_samples, duration, rate,
                 chord_bass='sparse_categorical_crossentropy')
     monitor = 'val_chord_tag_sparse_categorical_accuracy'
 
-    model.compile(K.optimizers.Adam(), loss=loss, metrics=metrics)
+    sgd = optimizers.SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
+    model.compile(sgd, loss=loss, metrics=metrics)
 
     # Store the model
     model_spec = K.utils.serialize_keras_object(model)
