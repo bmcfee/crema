@@ -5,7 +5,6 @@ import argparse
 import os
 import sys
 from glob import glob
-import six
 import pickle
 
 import pandas as pd
@@ -14,6 +13,7 @@ import keras as K
 from sklearn.model_selection import ShuffleSplit
 
 import pescador
+import pumpp
 import librosa
 import crema.utils
 import crema.layers
@@ -23,6 +23,7 @@ OUTPUT_PATH = 'resources'
 
 
 def process_arguments(args):
+    '''parse arguments'''
     parser = argparse.ArgumentParser(description=__doc__)
 
     parser.add_argument('--max_samples', dest='max_samples', type=int,
@@ -50,19 +51,15 @@ def process_arguments(args):
                         help='Rate of pescador stream deactivation')
 
     parser.add_argument('--epochs', dest='epochs', type=int,
-                        default=100,
+                        default=1000,
                         help='Maximum number of epochs to train for')
 
     parser.add_argument('--epoch-size', dest='epoch_size', type=int,
-                        default=512,
+                        default=2048,
                         help='Number of batches per epoch')
 
-    parser.add_argument('--validation-size', dest='validation_size', type=int,
-                        default=1024,
-                        help='Number of batches per validation')
-
     parser.add_argument('--early-stopping', dest='early_stopping', type=int,
-                        default=20,
+                        default=100,
                         help='# epochs without improvement to stop')
 
     parser.add_argument('--reduce-lr', dest='reduce_lr', type=int,
@@ -76,12 +73,23 @@ def process_arguments(args):
 
 
 def make_sampler(max_samples, duration, pump, seed):
-
+    '''stochastic training sampler'''
     n_frames = librosa.time_to_frames(duration,
                                       sr=pump['cqt'].sr,
                                       hop_length=pump['cqt'].hop_length)
 
     return pump.sampler(max_samples, n_frames, random_state=seed)
+
+
+def val_sampler(max_duration, pump, seed):
+    '''validation sampler'''
+    n_frames = librosa.time_to_frames(max_duration,
+                                      sr=pump['cqt'].sr,
+                                      hop_length=pump['cqt'].hop_length)
+
+    return pumpp.sampler.VariableLengthSampler(None, 32, n_frames,
+                                               *pump.ops,
+                                               random_state=seed)
 
 
 def data_sampler(fname, sampler):
@@ -90,8 +98,7 @@ def data_sampler(fname, sampler):
         yield datum
 
 
-def data_generator(working, tracks, sampler, k, augment=True, rate=8,
-                   **kwargs):
+def data_generator(working, tracks, sampler, k, augment=True, rate=8, **kwargs):
     '''Generate a data stream from a collection of tracks and a sampler'''
 
     seeds = []
@@ -110,8 +117,25 @@ def data_generator(working, tracks, sampler, k, augment=True, rate=8,
     return pescador.StochasticMux(seeds, k, rate, **kwargs)
 
 
-def construct_model(pump):
+def val_generator(working, tracks, sampler, augment=True):
+    '''validation generator, deterministic roundrobin'''
+    seeds = []
+    for track in tracks:
+        fname = os.path.join(working,
+                             os.path.extsep.join([track, 'h5']))
+        seeds.append(pescador.Streamer(data_sampler, fname, sampler))
 
+        if augment:
+            for fname in sorted(glob(os.path.join(working,
+                                                  '{}.*.h5'.format(track)))):
+                seeds.append(pescador.Streamer(data_sampler, fname, sampler))
+
+    # Send it all to a mux
+    return pescador.RoundRobinMux(seeds)
+
+
+def construct_model(pump):
+    '''build the model'''
     model_inputs = 'cqt/mag'
 
     # Build the input layer
@@ -126,43 +150,53 @@ def construct_model(pump):
                                    activation='relu',
                                    data_format='channels_last')(x_bn)
 
+    c1bn = K.layers.BatchNormalization()(conv1)
+
     # Second convolutional filter: a bank of full-height filters
     conv2 = K.layers.Convolution2D(12*6, (1, int(conv1.shape[2])),
                                    padding='valid', activation='relu',
-                                   data_format='channels_last')(conv1)
+                                   data_format='channels_last')(c1bn)
+
+    c2bn = K.layers.BatchNormalization()(conv2)
 
     # Squeeze out the frequency dimension
-    squeeze = crema.layers.SqueezeLayer(axis=2)(conv2)
+    squeeze = crema.layers.SqueezeLayer(axis=2)(c2bn)
 
     # BRNN layer
     rnn1 = K.layers.Bidirectional(K.layers.GRU(128,
                                                return_sequences=True))(squeeze)
 
-    rnn = K.layers.Bidirectional(K.layers.GRU(128,
-                                              return_sequences=True))(rnn1)
+    r1bn = K.layers.BatchNormalization()(rnn1)
+
+    rnn2 = K.layers.Bidirectional(K.layers.GRU(128,
+                                              return_sequences=True))(r1bn)
+
+    r2bn = K.layers.BatchNormalization()(rnn2)
 
     # 1: pitch class predictor
     pc = K.layers.Dense(pump.fields['chord_struct/pitch'].shape[1],
                         activation='sigmoid')
 
-    pc_p = K.layers.TimeDistributed(pc, name='chord_pitch')(rnn)
+    pc_p = K.layers.TimeDistributed(pc, name='chord_pitch')(rnn2)
 
     # 2: root predictor
     root = K.layers.Dense(13, activation='softmax')
-    root_p = K.layers.TimeDistributed(root, name='chord_root')(rnn)
+    root_p = K.layers.TimeDistributed(root, name='chord_root')(rnn2)
 
     # 3: bass predictor
     bass = K.layers.Dense(13, activation='softmax')
-    bass_p = K.layers.TimeDistributed(bass, name='chord_bass')(rnn)
+    bass_p = K.layers.TimeDistributed(bass, name='chord_bass')(rnn2)
 
     # 4: merge layer
-    codec = K.layers.concatenate([rnn, pc_p, root_p, bass_p])
+    codec = K.layers.concatenate([rnn2, pc_p, root_p, bass_p])
+
+    codecbn = K.layers.BatchNormalization()(codec)
 
     p0 = K.layers.Dense(len(pump['chord_tag'].vocabulary()),
                         activation='softmax',
                         bias_regularizer=K.regularizers.l2())
 
-    tag = K.layers.TimeDistributed(p0, name='chord_tag')(codec)
+    tag = K.layers.TimeDistributed(p0, name='chord_tag')(codecbn)
 
     model = K.models.Model(x, [tag, pc_p, root_p, bass_p])
     model_outputs = ['chord_tag/chord',
@@ -174,7 +208,7 @@ def construct_model(pump):
 
 
 def train(working, max_samples, duration, rate,
-          batch_size, epochs, epoch_size, validation_size,
+          batch_size, epochs, epoch_size,
           early_stopping, reduce_lr, seed):
     '''
     Parameters
@@ -220,6 +254,9 @@ def train(working, max_samples, duration, rate,
     # Build the sampler
     sampler = make_sampler(max_samples, duration, pump, seed)
 
+    # And the validation sampler: cap out at 10 minutes
+    sampler_val = val_sampler(10 * 60, pump, seed)
+
     # Build the model
     model, inputs, outputs = construct_model(pump)
 
@@ -247,12 +284,11 @@ def train(working, max_samples, duration, rate,
                                            inputs=inputs,
                                            outputs=outputs)
 
-    gen_val = data_generator(working,
-                             idx_val['id'].values, sampler, len(idx_val),
-                             augment=True,
-                             rate=rate,
-                             mode='with_replacement',
-                             random_state=seed)
+    gen_val = val_generator(working,
+                            idx_val['id'].values, sampler_val,
+                            augment=True)
+
+    validation_size = gen_val.n_streams
 
     gen_val = pescador.maps.keras_tuples(gen_val(),
                                          inputs=inputs,
@@ -264,9 +300,10 @@ def train(working, max_samples, duration, rate,
     loss.update(chord_pitch='binary_crossentropy',
                 chord_root='sparse_categorical_crossentropy',
                 chord_bass='sparse_categorical_crossentropy')
-    monitor = 'val_chord_tag_loss'
+    monitor = 'val_chord_tag_sparse_categorical_accuracy'
 
-    model.compile(K.optimizers.Adam(), loss=loss, metrics=metrics)
+    sgd = K.optimizers.SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
+    model.compile(sgd, loss=loss, metrics=metrics)
 
     # Store the model
     model_spec = K.utils.serialize_keras_object(model)
@@ -315,7 +352,6 @@ if __name__ == '__main__':
           params.rate,
           params.batch_size,
           params.epochs, params.epoch_size,
-          params.validation_size,
           params.early_stopping,
           params.reduce_lr,
           params.seed)
