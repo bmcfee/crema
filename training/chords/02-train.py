@@ -27,7 +27,7 @@ def process_arguments(args):
     parser = argparse.ArgumentParser(description=__doc__)
 
     parser.add_argument('--max_samples', dest='max_samples', type=int,
-                        default=128,
+            default=128,
                         help='Maximum number of samples to draw per streamer')
 
     parser.add_argument('--patch-duration', dest='duration', type=float,
@@ -35,7 +35,7 @@ def process_arguments(args):
                         help='Duration (in seconds) of training patches')
 
     parser.add_argument('--seed', dest='seed', type=int,
-                        default='20170412',
+                        default='20190814',
                         help='Seed for the random number generator')
 
     parser.add_argument('--train-streamers', dest='train_streamers', type=int,
@@ -43,15 +43,15 @@ def process_arguments(args):
                         help='Number of active training streamers')
 
     parser.add_argument('--batch-size', dest='batch_size', type=int,
-                        default=32,
+                        default=16,
                         help='Size of training batches')
 
     parser.add_argument('--rate', dest='rate', type=int,
-                        default=8,
+                        default=16,
                         help='Rate of pescador stream deactivation')
 
     parser.add_argument('--epochs', dest='epochs', type=int,
-                        default=1000,
+                        default=500,
                         help='Maximum number of epochs to train for')
 
     parser.add_argument('--epoch-size', dest='epoch_size', type=int,
@@ -170,8 +170,6 @@ def construct_model(pump):
 
     rnn2 = K.layers.Bidirectional(K.layers.GRU(128,
                                               return_sequences=True))(r1bn)
-
-    r2bn = K.layers.BatchNormalization()(rnn2)
 
     # 1: pitch class predictor
     pc = K.layers.Dense(pump.fields['chord_struct/pitch'].shape[1],
@@ -302,8 +300,9 @@ def train(working, max_samples, duration, rate,
                 chord_bass='sparse_categorical_crossentropy')
     monitor = 'val_chord_tag_sparse_categorical_accuracy'
 
-    sgd = K.optimizers.SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
-    model.compile(sgd, loss=loss, metrics=metrics)
+    #sgd = K.optimizers.SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
+    adam = K.optimizers.Adam()
+    model.compile(adam, loss=loss, metrics=metrics)
 
     # Store the model
     model_spec = K.utils.serialize_keras_object(model)
