@@ -52,7 +52,7 @@ def process_arguments(args):
 def make_pump(sr, hop_length, n_octaves):
     p_feature = pumpp.feature.HCQTMag(name='cqt',
                                       sr=sr, hop_length=hop_length,
-                                      harmonics=[1, 2, 3],
+                                      harmonics=[1, 2],
                                       log=True, conv='tf', n_octaves=n_octaves)
 
     p_chord_tag = pumpp.task.ChordTagTransformer(name='chord_tag',
