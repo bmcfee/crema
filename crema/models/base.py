@@ -16,8 +16,13 @@ CORE_CUSTOM_OBJECTS = {k: layers.__dict__[k] for k in layers.__all__}
 
 
 class CremaModel(object):
+    name = None
     model_root = None
     custom_objects = {}
+
+    def __init__(self):
+        if self.name:
+            self._instantiate(self.name)
 
     def predict(self, filename=None, y=None, sr=None, outputs=None):
         '''Predict annotations
