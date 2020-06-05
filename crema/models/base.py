@@ -17,7 +17,7 @@ CORE_CUSTOM_OBJECTS = {k: layers.__dict__[k] for k in layers.__all__}
 
 class CremaModel(object):
     name = None
-    model_root = None
+    models_dir = None
     custom_objects = {}
 
     def __init__(self):
@@ -99,26 +99,27 @@ class CremaModel(object):
         '''Feature transformation'''
         raise NotImplementedError
 
-    def _get_resource(self, *fname):
+    @classmethod
+    def resource_file(cls, *fname):
         return (
-            os.path.join(self.model_root, *fname) if self.model_root
+            os.path.join(cls.models_dir, *fname) if cls.models_dir is not None
             else resource_filename(__name__, os.path.join(*fname)))
 
     def _instantiate(self, rsc):
 
         # First, load the pump
-        with open(self._get_resource(rsc, 'pump.pkl'), 'rb') as fd:
+        with open(self.resource_file(rsc, 'pump.pkl'), 'rb') as fd:
             self.pump = pickle.load(fd)
 
         # Now load the model
         custom_objects = dict(CORE_CUSTOM_OBJECTS, **self.custom_objects)
-        with open(self._get_resource(rsc, 'model_spec.pkl'), 'rb') as fd:
+        with open(self.resource_file(rsc, 'model_spec.pkl'), 'rb') as fd:
             spec = pickle.load(fd)
             self.model = model_from_config(spec, custom_objects=custom_objects)
 
         # And the model weights
-        self.model.load_weights(self._get_resource(rsc, 'model.h5'))
+        self.model.load_weights(self.resource_file(rsc, 'model.h5'))
 
         # And the version number
-        with open(self._get_resource(rsc, 'version.txt'), 'r') as fd:
+        with open(self.resource_file(rsc, 'version.txt'), 'r') as fd:
             self.version = fd.read().strip()
