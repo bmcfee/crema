@@ -20,7 +20,9 @@ class CremaModel(object):
     models_dir = None
     custom_objects = {}
 
-    def __init__(self):
+    def __init__(self, name=None, models_dir=None):
+        self.name = name or self.name
+        self.models_dir = models_dir or self.models_dir
         if self.name:
             self._instantiate(self.name)
 
@@ -99,11 +101,11 @@ class CremaModel(object):
         '''Feature transformation'''
         raise NotImplementedError
 
-    @classmethod
-    def resource_file(cls, *fname):
+    def resource_file(self, f='', *fname):
         return (
-            os.path.join(cls.models_dir, *fname) if cls.models_dir is not None
-            else resource_filename(__name__, os.path.join(*fname)))
+            os.path.join(self.models_dir, f, *fname)
+            if self.models_dir is not None else
+            resource_filename(__name__, os.path.join(f, *fname)))
 
     def _instantiate(self, rsc):
 
