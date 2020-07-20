@@ -26,6 +26,17 @@ class CremaModel(object):
         if self.name:
             self._instantiate(self.name)
 
+    def __str__(self):
+        if not hasattr(self, 'model'):  # not instantiated
+            return super().__str__()
+        return (
+            '<{} version={} resources={}\n'
+            '--------\n'
+            '* {}\n* {}\n'
+            '--------->').format(
+                self.__class__.__name__, self.version,
+                self.resource_file(), self.pump, self.model)
+
     def predict(self, filename=None, y=None, sr=None, outputs=None):
         '''Predict annotations
 
