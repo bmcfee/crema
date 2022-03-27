@@ -12,7 +12,7 @@ convolutional and recurrent estimators for music analysis
 Usage options
 -------------
 
-From the command-line, print to the screen in JAMS format:
+From the command-line, print to the screen in [JAMS](https://github.com/marl/jams) format:
 
 ```
 python -m crema.analyze file.mp3
