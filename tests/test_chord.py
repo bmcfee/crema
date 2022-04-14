@@ -11,14 +11,14 @@ import crema.models.chord
 
 @pytest.fixture
 def SIGNAL():
-    y, sr = librosa.load(librosa.util.example_audio_file(),
+    y, sr = librosa.load(librosa.ex('brahms'),
                          sr=None)
     return y, sr
 
 
 @pytest.fixture
 def AUDIOFILE():
-    return librosa.util.example_audio_file()
+    return librosa.ex('brahms')
 
 
 @pytest.fixture
