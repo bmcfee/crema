@@ -38,7 +38,7 @@ setup(
                       'keras>=2.6',
                       'tensorflow>=2.0',
                       'mir_eval>=0.5',
-                      'pumpp>=0.4',
+                      'pumpp>=0.6',
                       'h5py>=2.7'],
     extras_require={
         'docs': ['numpydoc', 'sphinx'],
