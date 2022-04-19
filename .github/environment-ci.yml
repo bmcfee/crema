@@ -1,0 +1,25 @@
+name: test
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  # required
+  - pip
+  - librosa>=0.8
+  - keras>=2.6
+  - tensorflow>=2.0
+  - scikit-learn>=0.20
+  # optional, but required for testing
+  - pytest-mpl
+  - pytest-cov
+  - pytest-faulthandler
+  - pytest
+  - contextlib2
+  - coverage
+  - h5py>=2.7
+  - pip:
+    - soxr
+    - samplerate
+    - jams>=0.3
+    - mir_eval>=0.5
+    - pumpp>=0.6

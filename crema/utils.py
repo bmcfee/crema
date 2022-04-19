@@ -120,7 +120,7 @@ def load_h5(filename):
 
     def collect(k, v):
         if isinstance(v, h5py.Dataset):
-            data[k] = v.value
+            data[k] = v[...]
 
     with h5py.File(filename, mode='r') as hf:
         hf.visititems(collect)
