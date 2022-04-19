@@ -49,7 +49,7 @@ The simplest way to apply `crema` is via the command line:
     python -m crema.analyze -o my_song.jams /path/to/my_song.ogg
 
 .. note:: 
-    Any audio format supported by `librosa <https://librosa.github.io/>`_ will work here.
+    Any audio format supported by `librosa <https://librosa.org/>`_ will work here.
 
 This command will apply all analyzers to `mysong.ogg` and store the outputs as
 `my_song.jams`.
