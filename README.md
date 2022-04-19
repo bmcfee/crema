@@ -1,6 +1,8 @@
 # crema
 convolutional and recurrent estimators for music analysis
 
+[![Testing](https://github.com/bmcfee/crema/actions/workflows/ci.yml/badge.svg)](https://github.com/bmcfee/crema/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/bmcfee/crema/branch/main/graph/badge.svg?token=3FujfyA0jz)](https://codecov.io/gh/bmcfee/crema)
 [![GitHub license](https://img.shields.io/badge/license-BSD-blue.svg)](https://raw.githubusercontent.com/bmcfee/crema/master/LICENSE)
 [![Documentation Status](https://readthedocs.org/projects/crema/badge/?version=latest)](http://crema.readthedocs.io/en/latest/?badge=latest)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1010486.svg)](https://doi.org/10.5281/zenodo.1010486)
