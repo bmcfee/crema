@@ -50,7 +50,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'crema'
-copyright = '2017, Brian McFee'
+copyright = '2017-2022, Brian McFee'
 author = 'Brian McFee'
 
 
@@ -63,7 +63,8 @@ class Mock(MagicMock):
     def __getattr__(cls, name):
         return MagicMock()
 
-MOCK_MODULES = ['keras', 'tensorflow', 'numpy', 'mir_eval',
+MOCK_MODULES = ['keras', 'keras.backend', 'keras.layers', 'keras.models',
+                'tensorflow', 'numpy', 'mir_eval',
                 'scipy', 'scipy.stats', 'librosa.util',
                 'jams', 'h5py', 'librosa']
 
@@ -196,5 +197,5 @@ texinfo_documents = [
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {'https://docs.python.org/': None,
                        'numpy': ('https://docs.scipy.org/doc/numpy/', None),
-                       'librosa': ('https://librosa.github.io/librosa', None),
+                       'librosa': ('https://librosa.org/doc/latest', None),
                        'jams': ('https://jams.readthedocs.io/en/latest', None)}
