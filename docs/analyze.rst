@@ -2,6 +2,5 @@
 
 Analyzer
 ========
-.. module:: crema
 .. automodule:: crema.analyze
     :members:
