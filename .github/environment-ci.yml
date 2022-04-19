@@ -22,3 +22,4 @@ dependencies:
     - samplerate
     - jams>=0.3
     - mir_eval>=0.5
+    - pumpp>=0.6
